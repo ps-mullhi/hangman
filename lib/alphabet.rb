@@ -21,4 +21,17 @@ class Alphabet
       end
     end
   end
+
+  def to_json()
+    JSON.dump ({
+      :remaining_letters => @remaining_letters
+    })
+  end
+
+  def self.from_json(string)
+    data = JSON.load string
+    obj = self.new()
+    obj.instance_variable_set(:@remaining_letters, data['remaining_letters'])
+    obj
+  end
 end

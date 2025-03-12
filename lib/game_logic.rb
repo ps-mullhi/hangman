@@ -1,3 +1,5 @@
+require 'json'
+
 class GameLogic
   attr_reader :word, :word_progress, :number_of_lives
 
@@ -27,6 +29,23 @@ class GameLogic
     else
       @number_of_lives -= 1
     end
+  end
+
+  def to_json()
+    JSON.dump ({
+      :word => @word,
+      :word_progress => @word_progress,
+      :number_of_lives => @number_of_lives
+    })
+  end
+
+  def self.from_json(string)
+    data = JSON.load string
+    obj = self.new('dictionary.txt')
+    obj.instance_variable_set(:@word, data['word'])
+    obj.instance_variable_set(:@word_progress, data['word_progress'])
+    obj.instance_variable_set(:@number_of_lives, data['number_of_lives'])
+    obj
   end
 
   private 

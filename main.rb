@@ -1,5 +1,6 @@
 require_relative "lib/game_logic.rb"
 require_relative "lib/alphabet.rb"
+require 'json'
 
 
 def welcome_message()
@@ -99,14 +100,32 @@ def process_word_guess(game_logic, alphabet)
   game_logic.user_guess_word(word)
 end
 
-def save_game()
-  puts('save game not implemented')
+def save_game(game_logic, alphabet)
+  filename = "saved_data.json"
+
+  save_data = JSON.dump ({
+    :game_logic => game_logic.to_json(),
+    :alphabet => alphabet.to_json()
+  })
+
+  File.open(filename, 'w') do |file|
+    file.puts save_data
+  end
+
+  # data = JSON.load test
+  # game_logic_json = data['game_logic']
+  # alphabet_json = data['alphabet']
+
+  # restored_game_logic = GameLogic.from_json(game_logic_json)
+  # restored_alphabet_json = Alphabet.from_json(alphabet_json)
+
+  # p restored_game_logic
+  # p restored_alphabet_json
 end
 
 def main()
   welcome_message()
   game_logic = GameLogic.new("dictionary.txt")
-  # puts game_logic.word
   alphabet = Alphabet.new()
 
   loop do 
@@ -118,7 +137,8 @@ def main()
     elsif option == "2"
       process_word_guess(game_logic, alphabet)
     elsif option == "3"
-      save_game()
+      save_game(game_logic, alphabet)
+      return
     else
       puts("You should never see this.")
     end
