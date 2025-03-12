@@ -111,22 +111,50 @@ def save_game(game_logic, alphabet)
   File.open(filename, 'w') do |file|
     file.puts save_data
   end
+end
 
-  # data = JSON.load test
-  # game_logic_json = data['game_logic']
-  # alphabet_json = data['alphabet']
+def ask_load_game?()
+  confirmation = ''
+  loop do
+    print('Would you like to load the last saved game (y/n): ')
+    confirmation = gets.gsub(/\s+/, "").downcase
+    break if confirmation == 'y' || confirmation == 'n'
+  end
+  
+  if confirmation == 'y'
+    true
+  else
+    false
+  end
+end
 
-  # restored_game_logic = GameLogic.from_json(game_logic_json)
-  # restored_alphabet_json = Alphabet.from_json(alphabet_json)
+def load_saved_game()
+  json_string = File.read('saved_data.json')
 
-  # p restored_game_logic
-  # p restored_alphabet_json
+  data = JSON.load json_string
+  game_logic_json = data['game_logic']
+  alphabet_json = data['alphabet']
+
+  restored_game_logic = GameLogic.from_json(game_logic_json)
+  restored_alphabet = Alphabet.from_json(alphabet_json)
+
+  [restored_game_logic, restored_alphabet]
 end
 
 def main()
   welcome_message()
-  game_logic = GameLogic.new("dictionary.txt")
-  alphabet = Alphabet.new()
+  game_logic = nil
+  alphabet = nil
+  
+
+  should_load = ask_load_game?()
+  if should_load
+    game_logic, alphabet = load_saved_game()
+  else
+    game_logic = GameLogic.new("dictionary.txt")
+    alphabet = Alphabet.new()
+  end
+
 
   loop do 
     display_current_state(game_logic.word_progress, alphabet.remaining_letters)
